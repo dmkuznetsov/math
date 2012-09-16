@@ -67,6 +67,7 @@ define( [
             generate: generate
             , check: check
             , setLimitFunc: setLimitFunc
+            , levels: levels
         };
     };
 });

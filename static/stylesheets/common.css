@@ -14,7 +14,7 @@
     color: #ccc;
 }
 .math-test > .math-test-label {
-    width: 80px;
+    width: 100px;
     float: left;
     letter-spacing: 2px;
     text-align: center;
@@ -35,4 +35,20 @@
     font-weight: bold;
     font-size: 11pt;
     float: left;
+}
+
+.sign {
+    padding: 0;
+    text-align: right;
+}
+.sign hr {
+    margin: 0;
+    padding: 0;
+}
+.sign .licence {
+    margin: 0 10px;
+}
+
+.hide {
+    display: none;
 }

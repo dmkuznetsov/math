@@ -1,0 +1,9 @@
+<ol>
+    <% for( var i in levels ) { %>
+    <li>
+        <a href="#level-<%= i %>" title="<%= levels[ i ].desc %>" class="choose-level" data-level="<%= i %>">
+            "<%= levels[ i ].operations.join( '", "' ) %>" operations with <%= levels[ i ].chars %> numbers from <%= levels[ i ].limit[0] %> to <%= levels[ i ].limit[1] %> (<%= levels[ i ].count %> ex.)
+        </a>
+    </li>
+    <% }; %>
+</ol>

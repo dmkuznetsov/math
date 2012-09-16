@@ -5,23 +5,50 @@ define( [
     "jquery"
     , 'repo/timer/main'
     , 'repo/test/main'
-], function( $, timerInstance, testInstance ) {
-    var timer, test, $btnStart, $gameField;
+    , 'text!./templates/levels.html'
+
+    , 'underscore'
+], function( $, timerInstance, testInstance, tplLevels ) {
+    var level = 0, timer, test, $btnStart, $btnBack, $gameField, $gameLevels;
 
     function init() {
         updateVars();
         bindEvents();
+
+        checkHash();
     };
 
     function updateVars() {
         timer = new timerInstance();
+        test = new testInstance( 0 );
+        test.setLimitFunc( stopGame );
 
         $btnStart = $( '.math > .start' );
+        $btnBack = $( '.math > .back' );
         $gameField = $( '.math > .field' );
+        $gameLevels = $( '.math > .levels' );
+        $gameLevels.html( _.template( tplLevels, { 'levels': test.levels } ) );
     };
 
     function bindEvents() {
-        $btnStart.click( startGame );
+        $btnStart.live( 'click', startGame );
+
+        $btnBack.live( 'click', function() {
+            level = 0;
+            $gameField.empty();
+            $gameLevels.show();
+            $btnStart.hide();
+            $btnBack.hide();
+        } );
+
+        $gameLevels.find( '.choose-level' ).live( 'click', function() {
+            level = $(this).data( 'level' );
+            $gameField.empty();
+            $gameLevels.hide();
+            $btnStart.show();
+            $btnBack.show();
+        } );
+
         $gameField.find( '.math-test-answer:last' ).live( 'keyup', function() {
             var $curTest = $(this).parents( '.math-test' );
 
@@ -33,17 +60,18 @@ define( [
         } );
     };
 
-    function startGame( event ) {
-        var variant = 0;
-        if( $(event.target).hasClass( 'minus' ) ) {
-            variant = 1;
-        } else if( $(event.target).hasClass( 'mixed' ) ) {
-            variant = 2;
+    function checkHash() {
+        var hash = document.location.hash.substr( 1 )
+            , result = /^level\-([0-9]+)/.exec( hash );
+        if( result ) {
+            $gameLevels.find( '.choose-level:eq('+result[ 1 ]+')' ).trigger( 'click' );
         };
-        test = new testInstance(variant);
+    };
+
+    function startGame() {
+        test = new testInstance( level );
         test.setLimitFunc( stopGame );
         $gameField.empty();
-//        $btnStart.attr( 'disabled', 'disabled' );
         timer.start();
         drawTest();
     };
@@ -54,8 +82,8 @@ define( [
         $gameField.find( '.math-test' ).addClass( 'success' );
         $gameField.find( '.math-test-answer' ).attr( 'disabled', 'disabled' );
 
-        $gameField.append( '<h3>You time: '+timer.result()/1000+' sec.</h3>' );
-        $gameField.append( '<h3>Average time: '+timer.getAverage()/1000+' sec.</h3>' );
+        $gameField.append( '<h3>You time: '+(timer.result()/1000).toFixed(1)+' sec.</h3>' );
+        $gameField.append( '<h3>Average time: '+(timer.getAverage()/1000).toFixed(1)+' sec.</h3>' );
         timer.clear();
         test = new testInstance(0);
         test.setLimitFunc( stopGame );
