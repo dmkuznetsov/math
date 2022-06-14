@@ -1,1 +1,0 @@
-define("require-css/css!style/style",[],function(){}),require(["css!style/style","components/component"],function(e){return"uses the component!"}),define("app",function(){})
